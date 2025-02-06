@@ -34,6 +34,7 @@ namespace YouTubeApi._1.Presentation
         }
         /// <summary>
         /// Chamada no Link https://localhost:7215/swagger/index.html
+        /// publishedAfter: 2025-01-01
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
