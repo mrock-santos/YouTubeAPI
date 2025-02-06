@@ -24,14 +24,19 @@ namespace YouTubeApi._1.Presentation
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             // Registro dos serviços
-            services.AddScoped<IYouTubeService, YouTubeService>();
+            //services.AddScoped<IYouTubeService, YouTubeService>();
+            services.AddHttpClient<IYouTubeService, YouTubeService>();
             services.AddScoped<IRepository<Video>, VideoRepository>();
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
-
+        /// <summary>
+        /// Chamada no Link https://localhost:7215/swagger/index.html
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
