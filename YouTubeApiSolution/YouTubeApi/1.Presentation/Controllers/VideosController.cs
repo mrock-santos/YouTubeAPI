@@ -20,11 +20,40 @@ namespace YouTubeApi._1.Presentation.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchVideos([FromQuery] string consulta, [FromQuery] DateTime DataPublicacaoPosterior)
+        public async Task<IActionResult> SearchVideos([FromQuery] string Consulta, [FromQuery] DateTime DataPublicacaoPosterior)
         {
-            var videos = await _youTubeService.SearchVideosAsync(consulta, DataPublicacaoPosterior);
+            var videos = await _youTubeService.SearchVideosAsync(Consulta, DataPublicacaoPosterior);
             return Ok(videos);
         }
+
+        // Endpoint para buscar vídeos na API do YouTube e populá-los no banco de dados
+        [HttpGet("search-and-populate")]
+        public async Task<IActionResult> SearchAndPopulate([FromQuery] string Consulta, [FromQuery] DateTime DataPublicacaoPosterior)
+        {
+            if (string.IsNullOrEmpty(Consulta))
+            {
+                return BadRequest("O parâmetro 'Consulta' é obrigatório.");
+            }
+
+            try
+            {
+                // Busca vídeos na API do YouTube
+                var videos = await _youTubeService.SearchVideosAsync(Consulta, DataPublicacaoPosterior);
+
+                // Insere os vídeos no banco de dados
+                foreach (var video in videos)
+                {
+                    await _repository.AddAsync(video);
+                }
+
+                return Ok($"Foram inseridos {videos.Count} vídeos no banco de dados.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao buscar e popular vídeos: {ex.Message}");
+            }
+        }
+
         // Endpoint para inserir um vídeo
         [HttpPost("inserir")]
         public async Task<IActionResult> InserirVideo([FromBody] Video video)
